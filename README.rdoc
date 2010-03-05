@@ -1,6 +1,9 @@
 = ftp_service
 
-Description goes here.
+An FTP Service is like a web service except stupid. You send your
+request by uploading an xml file and get your response by downloading
+another xml file. Have you ever had to deal with something like that? I
+have.
 
 == Note on Patches/Pull Requests
  
