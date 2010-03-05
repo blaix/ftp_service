@@ -7,17 +7,17 @@ have.
 
 == Installation
   
-    gem install ftp_service
+  gem install ftp_service
     
 == Usage
 
-    require 'ftp_service'
-    
-    FtpService.open('host', 'user', 'pass') do |service|
-      path = '/the/remote/path'
-      service.write_request("#{path}/request.xml", '<foo>bar</foo>')
-      response = service.read_response("#{path}/response.xml")
-    end
+  require 'ftp_service'
+  
+  FtpService.open('host', 'user', 'pass') do |service|
+    path = '/the/remote/path'
+    service.write_request("#{path}/request.xml", '<foo>bar</foo>')
+    response = service.read_response("#{path}/response.xml")
+  end
 
 * +read_response+ will block while it polls the server waiting for a
   response.
