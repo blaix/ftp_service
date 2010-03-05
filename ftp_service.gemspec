@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Justin Blake"]
   s.date = %q{2010-03-05}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{An FTP Service is like a web service except stupid. You send your request by uploading an xml file and get your response by downloading another xml file.}
   s.email = %q{justin@megablaix.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "ftp_service.gemspec",
      "lib/ftp_service.rb",
      "spec/ftp_service_spec.rb",
      "spec/spec.opts",
@@ -32,7 +33,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{A class for dealing with the worst possible type of "web" service.}
   s.test_files = [
     "spec/ftp_service_spec.rb",
      "spec/spec_helper.rb"
@@ -44,11 +45,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_development_dependency(%q<mocha>, [">= 0.9.8"])
     else
       s.add_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_dependency(%q<mocha>, [">= 0.9.8"])
     end
   else
     s.add_dependency(%q<rspec>, [">= 1.2.9"])
+    s.add_dependency(%q<mocha>, [">= 0.9.8"])
   end
 end
 
