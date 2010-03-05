@@ -1,4 +1,4 @@
-= ftp_service
+= FTP Service
 
 An FTP Service is like a web service except stupid. You send your
 request by uploading an xml file and get your response by downloading
