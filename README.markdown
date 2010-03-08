@@ -5,6 +5,10 @@ request by uploading an xml file and get your response by downloading
 another xml file. Have you ever had to deal with something like that? I
 have.
 
+RDocs on [rdoc.info](http://rdoc.info/projects/blaix/ftp_service).
+
+Source code on [github](http://github.com/blaix/ftp_service).
+
 ## Installation
   
     gem install ftp_service
