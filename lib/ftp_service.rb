@@ -1,4 +1,5 @@
 require 'net/ftp'
+require 'tempfile_helper'
 
 # Class for dealing with a service that acts like a web service, except
 # over FTP. Meaning an xml request is uploaded as a file, and the
@@ -31,6 +32,12 @@ class FtpService
     ensure
       instance.close
     end
+  end
+  
+  # Write the +request+ to the +remote_path+ on the FTP server.
+  def write_request(request, remote_path)
+    tmp = TempfileHelper.write(request, 'request')
+    @ftp.puttextfile(tmp.path, remote_path)
   end
   
   # Close the connection to the FTP server.

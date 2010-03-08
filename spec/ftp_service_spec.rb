@@ -43,6 +43,20 @@ describe "FtpService" do
     end
   end
   
+  describe '#write_request(path, request)' do
+    it "should upload the request to the path" do
+      tmpfile = Tempfile.new('request')
+      Tempfile.stubs(:new).returns(tmpfile)
+
+      @ftp.expects(:puttextfile).with(tmpfile.path, '/remote/path')
+      FtpService.open('host', 'user', 'pass') do |service|
+        service.write_request('<request>blah</request>', '/remote/path')
+      end
+      
+      File.read(tmpfile.path).should == "<request>blah</request>"
+    end
+  end
+  
   describe '#close' do
     it 'should close the connection to the ftp server' do
       @ftp.expects(:close)
