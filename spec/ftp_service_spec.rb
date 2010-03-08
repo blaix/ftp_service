@@ -76,6 +76,9 @@ describe "FtpService" do
     it "returns the contents of the downloaded response" do
       @service.read_response('/remote/path').should == "response"
     end
+    
+    it "polls until response shows up"
+    it "times out if response takes too long to show up"
   end
   
   describe '#close' do

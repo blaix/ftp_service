@@ -51,6 +51,7 @@ class FtpService
   
   # Download the file at `remote_path` from the FTP server to a  local
   # temp file and return its contents.
+  # TDODO: poll until file shows up (or times out)
   def read_response(remote_path)
     TempfileHelper.read('response') do |tmp|
       @ftp.gettextfile(remote_path, tmp.path)
