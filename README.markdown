@@ -1,4 +1,4 @@
-= FTP Service
+# FTP Service
 
 An FTP Service is like a web service except stupid. You send your
 request by uploading an xml file and get your response by downloading
@@ -7,26 +7,26 @@ have.
 
 RDocs: http://rdoc.info/projects/blaix/ftp_service
 
-== Installation
+## Installation
   
   gem install ftp_service
     
-== Usage
+## Usage
 
-  require 'ftp_service'
+    require 'ftp_service'
   
-  FtpService.open('host', 'user', 'pass') do |service|
-    path = '/the/remote/path'
-    service.write_request("#{path}/request.xml", '<foo>bar</foo>')
-    response = service.read_response("#{path}/response.xml")
-  end
+    FtpService.open('host', 'user', 'pass') do |service|
+      path = '/the/remote/path'
+      service.write_request("#{path}/request.xml", '<foo>bar</foo>')
+      response = service.read_response("#{path}/response.xml")
+    end
 
 * +read_response+ will block while it polls the server waiting for a
   response.
 * Temp files are created for the local request and response files and
   deleted when no longer needed.
   
-== Note on Patches/Pull Requests
+## Note on Patches/Pull Requests
  
 * Fork the project.
 * Make your feature addition or bug fix.
@@ -37,6 +37,6 @@ RDocs: http://rdoc.info/projects/blaix/ftp_service
   itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
-== Copyright
+## Copyright
 
 Copyright (c) 2010 Justin Blake. See LICENSE for details.
