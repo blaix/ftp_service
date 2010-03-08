@@ -5,11 +5,9 @@ request by uploading an xml file and get your response by downloading
 another xml file. Have you ever had to deal with something like that? I
 have.
 
-RDocs: http://rdoc.info/projects/blaix/ftp_service
-
 ## Installation
   
-  gem install ftp_service
+    gem install ftp_service
     
 ## Usage
 
@@ -21,10 +19,14 @@ RDocs: http://rdoc.info/projects/blaix/ftp_service
       response = service.read_response("#{path}/response.xml")
     end
 
-* +read_response+ will block while it polls the server waiting for a
+* `read_response` will block while it polls the server waiting for a
   response.
 * Temp files are created for the local request and response files and
   deleted when no longer needed.
+
+For more details, see the
+[RDocs](http://rdoc.info/projects/blaix/ftp_service) (sike they are
+really yardocs!).
   
 ## Note on Patches/Pull Requests
  
