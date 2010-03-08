@@ -12,7 +12,7 @@ describe "FtpService" do
       FtpService.new('host', 'user', 'pass')
     end
 
-    it 'yields an instance of the ftp service' do
+    it 'returns an instance of the ftp service' do
       service = FtpService.new('host', 'user', 'pass')
       service.should be_a(FtpService)
     end
@@ -44,16 +44,37 @@ describe "FtpService" do
   end
   
   describe '#write_request(path, request)' do
-    it "uploads the request to the path" do
-      tmpfile = Tempfile.new('request')
-      Tempfile.stubs(:new).returns(tmpfile)
-
-      @ftp.expects(:puttextfile).with(tmpfile.path, '/remote/path')
-      FtpService.open('host', 'user', 'pass') do |service|
-        service.write_request('<request>blah</request>', '/remote/path')
-      end
-      
-      File.read(tmpfile.path).should == "<request>blah</request>"
+    before do
+      @tempfile = stub('tempfile', :path => '/local/path')
+      @service = FtpService.new('host', 'user', 'pass')
+    end
+    
+    it "saves the request to a temp file" do
+      TempfileHelper.expects(:write).with('request', optionally(anything)).returns(@tempfile)
+      @service.write_request('request', '/remote/path')
+    end
+    
+    it "uploads the request to `path` on the FTP server" do
+      TempfileHelper.stubs(:write).returns(@tempfile)
+      @ftp.expects(:puttextfile).with('/local/path', '/remote/path')
+      @service.write_request('request', '/remote/path')
+    end
+  end
+  
+  describe '#read_response(path)' do
+    before do
+      tempfile = stub('tempfile', :path => '/local/path')
+      TempfileHelper.stubs(:read).returns('response').yields(tempfile)
+      @service = FtpService.new('host', 'user', 'pass')
+    end
+    
+    it "downloads the response at `path` from the FTP server" do
+      @ftp.expects(:gettextfile).with('/remote/path', '/local/path')
+      @service.read_response('/remote/path')
+    end
+    
+    it "returns the contents of the downloaded response" do
+      @service.read_response('/remote/path').should == "response"
     end
   end
   

@@ -40,6 +40,12 @@ class FtpService
     @ftp.puttextfile(tmp.path, remote_path)
   end
   
+  def read_response(remote_path)
+    TempfileHelper.read('response') do |tmp|
+      @ftp.gettextfile(remote_path, tmp.path)
+    end
+  end
+  
   # Close the connection to the FTP server.
   def close
     @ftp.close
