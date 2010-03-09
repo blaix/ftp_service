@@ -49,17 +49,37 @@ class FtpService
     @ftp.puttextfile(tmp.path, remote_path)
   end
   
-  # Download the file at `remote_path` from the FTP server to a  local
-  # temp file and return its contents.
-  # TDODO: poll until file shows up (or times out)
+  # Download the file at `remote_path` from the FTP server to a local
+  # temp file and return its contents. If `remote_path` doesn't exist,
+  # keep trying for 2 minutes before raising a Timeout::Error.
   def read_response(remote_path)
     TempfileHelper.read('response') do |tmp|
-      @ftp.gettextfile(remote_path, tmp.path)
+      Timeout::timeout(120) do
+        loop_until_downloaded(remote_path, tmp.path)
+      end
     end
   end
   
   # Close the connection to the FTP server.
   def close
     @ftp.close
+  end
+  
+  private
+  
+  def loop_until_downloaded(remote_path, local_path)
+    loop do
+      begin
+        @ftp.gettextfile(remote_path, local_path)
+        break
+      rescue Net::FTPPermError => e
+        raise unless e.message.include?("No such file")
+        rest_between_requests
+      end
+    end
+  end
+  
+  def rest_between_requests
+    sleep(2)
   end
 end

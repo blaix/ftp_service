@@ -6,6 +6,8 @@ describe "FtpService" do
     Net::FTP.stubs(:open).returns(@ftp)
   end
   
+  it "logs everything"
+  
   describe '.new(host, user, pass)' do
     it 'connects to the requested ftp server' do
       Net::FTP.expects(:open).with('host', 'user', 'pass').returns(@ftp)
@@ -65,7 +67,10 @@ describe "FtpService" do
     before do
       tempfile = stub('tempfile', :path => '/local/path')
       TempfileHelper.stubs(:read).returns('response').yields(tempfile)
+
       @service = FtpService.new('host', 'user', 'pass')
+      # No need to be nice to the "server" during testing...
+      @service.stubs(:rest_between_requests)
     end
     
     it "downloads the response at `path` from the FTP server" do
@@ -77,8 +82,30 @@ describe "FtpService" do
       @service.read_response('/remote/path').should == "response"
     end
     
-    it "polls until response shows up"
-    it "times out if response takes too long to show up"
+    it "polls until response shows up" do
+      error = Net::FTPPermError.new("No such file")
+      # Raise error on the first two calls...
+      @ftp.expects(:gettextfile).times(3).raises(error).then.raises(error).then.returns(nil)
+      lambda {
+        @service.read_response('/remote/path')
+      }.should_not raise_error
+    end
+    
+    it "times out if response takes longer than 2 minutes to show up" do
+      # TODO: Less brittle way to test this?
+      # Currently depends on inner workings of Timeout.
+      Timeout.expects(:sleep).with(120)
+      lambda {
+        @service.read_response('/remote/path')
+      }.should raise_error(Timeout::Error)
+    end
+
+    it "doesn't gobble up every FTP exception" do
+      @ftp.stubs(:gettextfile).raises(Net::FTPPermError.new("Permission denied")).then.returns(nil)
+      lambda {
+        @service.read_response('/remote/path')
+      }.should raise_error(Net::FTPPermError, "Permission denied")
+    end
   end
   
   describe '#close' do
