@@ -10,6 +10,7 @@ begin
     gem.email = "justin@megablaix.com"
     gem.homepage = "http://github.com/blaix/ftp_service"
     gem.authors = ["Justin Blake"]
+    gem.add_dependency "ruby_gpg", ">= 0.1.0"
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "mocha", ">= 0.9.8"
     gem.add_development_dependency "yard", ">= 0.5.3"

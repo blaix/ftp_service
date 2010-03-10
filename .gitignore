@@ -19,5 +19,7 @@ rdoc
 doc
 pkg
 .yardoc
+tmp
 
 ## PROJECT::SPECIFIC
+test_keys/random_seed

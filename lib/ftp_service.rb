@@ -1,5 +1,6 @@
 require 'net/ftp'
 require 'tempfile_helper'
+require 'ftp_service/encryption'
 
 # Class for dealing with a service that acts like a web service, except
 # over FTP. Meaning an xml request is uploaded as a file, and the
@@ -21,6 +22,7 @@ require 'tempfile_helper'
 #   response = service.read_response("#{path}/response.xml")
 #   service.close
 class FtpService
+  include Encryption
   
   # Open a connection to the FTP server and return an FtpService object.
   # The object must be closed explicitely. See FtpServier#open for a
@@ -42,17 +44,32 @@ class FtpService
     end
   end
   
-  # Write `request` to a local temp file and upload it to `remote_path`
+  # Write +request+ to a local temp file and upload it to +remote_path+
   # on the FTP server.
-  def write_request(request, remote_path)
-    remote_temp_path = "#{remote_path}.tmp"
-    local_file = TempfileHelper.write(request, 'request')
-    @ftp.puttextfile(local_file.path, remote_temp_path)
+  #
+  #   write_request('<foo>bar</foo>', '/remote/path.xml')
+  #
+  # You can encrypt the request using GPG:
+  #
+  #   write_request('<secret>stuff</secret>', '/remote/path.xml.gpg', :gpg_recipient => 'recipient@email.com')
+  # 
+  # You must have +gpg+ installed and have a public key available for 
+  # the intended recipient. This uses the +ruby_gpg+ gem. To configure
+  # the gpg settings, see {http://rdoc.info/projects/blaix/ruby_gpg}.
+  def write_request(request, remote_path, options = {})
+    request = TempfileHelper.write(request, 'request')
+    remote_temp_path = remote_path + ".tmp"
+    if options[:gpg_recipient]
+      encrypt(request, options[:gpg_recipient])
+      @ftp.putbinaryfile(request.path, remote_temp_path)
+    else
+      @ftp.puttextfile(request.path, remote_temp_path)
+    end
     @ftp.rename(remote_temp_path, remote_path)
   end
   
-  # Download the file at `remote_path` from the FTP server to a local
-  # temp file and return its contents. If `remote_path` doesn't exist,
+  # Download the file at +remote_path+ from the FTP server to a local
+  # temp file and return its contents. If +remote_path+ doesn't exist,
   # keep trying for 2 minutes before raising a Timeout::Error.
   def read_response(remote_path)
     TempfileHelper.read('response') do |tmp|

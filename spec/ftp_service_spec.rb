@@ -54,10 +54,23 @@ describe "FtpService" do
       @service.write_request('request', '/remote/path')
     end
     
+    it "encrypts the request if passed a gpg recipient" do
+      TempfileHelper.stubs(:write).returns(@tempfile)
+      RubyGpg.expects(:encrypt).with('/local/path', 'recipient')
+      @service.write_request('request', '/remote/path.gpg', :gpg_recipient => 'recipient')
+    end
+    
     it "uploads the request to a temp path on the FTP server" do
       TempfileHelper.stubs(:write).returns(@tempfile)
       @ftp.expects(:puttextfile).with('/local/path', '/remote/path.tmp')
       @service.write_request('request', '/remote/path')
+    end
+
+    it "uploads the request as binary if passed a gpg recipient" do
+      TempfileHelper.stubs(:write).returns(@tempfile)
+      RubyGpg.stubs(:encrypt)
+      @ftp.expects(:putbinaryfile).with('/local/path.gpg', '/remote/path.gpg.tmp')
+      @service.write_request('request', '/remote/path.gpg', :gpg_recipient => 'recipient')
     end
     
     it "renames the temp path on the FTP server to the passed `path`" do
@@ -81,6 +94,8 @@ describe "FtpService" do
       @ftp.expects(:gettextfile).with('/remote/path', '/local/path')
       @service.read_response('/remote/path')
     end
+    
+    it "decrypts the response if using gpg"
     
     it "returns the contents of the downloaded response" do
       @service.read_response('/remote/path').should == "response"
