@@ -6,8 +6,6 @@ describe "FtpService" do
     Net::FTP.stubs(:open).returns(@ftp)
   end
   
-  it "logs everything"
-  
   describe '.new(host, user, pass)' do
     it 'connects to the requested ftp server' do
       Net::FTP.expects(:open).with('host', 'user', 'pass').returns(@ftp)

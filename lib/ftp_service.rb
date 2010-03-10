@@ -1,9 +1,6 @@
 require 'net/ftp'
 require 'tempfile_helper'
 
-# TODO: Remove need for temp files by using Net::FTP#retrlines/storlines
-# TODO: Use intermediate temp file for the uploaded request.
-
 # Class for dealing with a service that acts like a web service, except
 # over FTP. Meaning an xml request is uploaded as a file, and the
 # response xml is downloaded as another file.

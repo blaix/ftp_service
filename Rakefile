@@ -51,7 +51,7 @@ task :default => :spec
 begin
   require 'yard'
   YARD::Rake::YardocTask.new do |y|
-    y.files << '-' << 'CHANGELOG.*'
+    y.files << '-' << 'CHANGELOG.*' << 'TODO.*'
   end
 rescue LoadError
   task :yardoc do
