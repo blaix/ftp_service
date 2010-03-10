@@ -54,9 +54,15 @@ describe "FtpService" do
       @service.write_request('request', '/remote/path')
     end
     
-    it "uploads the request to `path` on the FTP server" do
+    it "uploads the request to a temp path on the FTP server" do
       TempfileHelper.stubs(:write).returns(@tempfile)
-      @ftp.expects(:puttextfile).with('/local/path', '/remote/path')
+      @ftp.expects(:puttextfile).with('/local/path', '/remote/path.tmp')
+      @service.write_request('request', '/remote/path')
+    end
+    
+    it "renames the temp path on the FTP server to the passed `path`" do
+      TempfileHelper.stubs(:write).returns(@tempfile)
+      @ftp.expects(:rename).with('/remote/path.tmp', '/remote/path')
       @service.write_request('request', '/remote/path')
     end
   end

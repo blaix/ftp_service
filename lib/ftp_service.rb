@@ -45,8 +45,10 @@ class FtpService
   # Write `request` to a local temp file and upload it to `remote_path`
   # on the FTP server.
   def write_request(request, remote_path)
-    tmp = TempfileHelper.write(request, 'request')
-    @ftp.puttextfile(tmp.path, remote_path)
+    remote_temp_path = "#{remote_path}.tmp"
+    local_file = TempfileHelper.write(request, 'request')
+    @ftp.puttextfile(local_file.path, remote_temp_path)
+    @ftp.rename(remote_temp_path, remote_path)
   end
   
   # Download the file at `remote_path` from the FTP server to a local
