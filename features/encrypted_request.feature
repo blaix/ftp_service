@@ -19,8 +19,7 @@ Feature: GPG Encryption
     And I decrypt the file "downloaded_request.gpg" with passphrase "test"
     Then the file "downloaded_request" should contain "secret content"
   
-  #Scenario: read a response
-  #  Given a file "response" with content "secret response"
-  #  And I encrypt the file "response" for recipient "Slow Joe Crow"
-  #  When the server responds with "response.gpg" at the path "response_path.gpg"
-  #  Then ...
+  Scenario: read a response
+    When the server responds with "secret response" encrypted for "Slow Joe Crow" at the path "response_path.gpg"
+    Then I can read the response at the path "response_path.gpg" with the passphrase "test"
+    And the response should be "secret response"

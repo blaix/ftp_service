@@ -47,11 +47,11 @@ class FtpService
   # Write +request+ to a local temp file and upload it to +remote_path+
   # on the FTP server.
   #
-  #   write_request('<foo>bar</foo>', '/remote/path.xml')
+  #   ftp_service.write_request('<foo>bar</foo>', '/remote/path.xml')
   #
   # You can encrypt the request using GPG:
   #
-  #   write_request('<secret>stuff</secret>', '/remote/path.xml.gpg', :gpg_recipient => 'recipient@email.com')
+  #   ftp_service.write_request('<secret>stuff</secret>', '/remote/path.xml.gpg', :gpg_recipient => 'recipient@email.com')
   # 
   # You must have +gpg+ installed and have a public key available for 
   # the intended recipient. This uses the +ruby_gpg+ gem. To configure
@@ -71,11 +71,22 @@ class FtpService
   # Download the file at +remote_path+ from the FTP server to a local
   # temp file and return its contents. If +remote_path+ doesn't exist,
   # keep trying for 2 minutes before raising a Timeout::Error.
-  def read_response(remote_path)
-    TempfileHelper.read('response') do |tmp|
-      Timeout::timeout(120) do
-        loop_until_downloaded(remote_path, tmp.path)
-      end
+  #
+  #   response = ftp_service.read_response('/remote/path.xml')
+  #
+  # If you expect the response to be encrypted for you with gpg:
+  #
+  #   response = ftp_service.read_response('/remote/path.xml.gpg', :gpg_passphrase => "my_passphrase")
+  #
+  # You must have +gpg+ installed and have the necessarry private key.
+  # This uses the +ruby_gpg+ gem. To configure the gpg settings, see
+  # {http://rdoc.info/projects/blaix/ruby_gpg}.
+  def read_response(remote_path, options = {})
+    response = download_and_read_response(remote_path, options)
+    if options[:gpg_passphrase]
+      RubyGpg.decrypt_string(response, options[:gpg_passphrase])
+    else
+      response
     end
   end
   
@@ -86,15 +97,31 @@ class FtpService
   
   private
   
-  def loop_until_downloaded(remote_path, local_path)
+  def download_and_read_response(remote_path, options = {})
+    TempfileHelper.read('response') do |tmp|
+      Timeout::timeout(120) do
+        loop_until_downloaded(remote_path, tmp.path, options)
+      end
+    end
+  end
+  
+  def loop_until_downloaded(remote_path, local_path, options = {})
     loop do
       begin
-        @ftp.gettextfile(remote_path, local_path)
+        download(remote_path, local_path, options)
         break
       rescue Net::FTPPermError => e
         raise unless e.message.include?("No such file")
         rest_between_requests
       end
+    end
+  end
+  
+  def download(remote_path, local_path, options = {})
+    if options[:gpg_passphrase]
+      @ftp.getbinaryfile(remote_path, local_path)
+    else
+      @ftp.gettextfile(remote_path, local_path)
     end
   end
   

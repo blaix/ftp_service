@@ -95,7 +95,16 @@ describe "FtpService" do
       @service.read_response('/remote/path')
     end
     
-    it "decrypts the response if using gpg"
+    it "downloads the response as binary if passed a gpg passphrase" do
+      RubyGpg.stubs(:decrypt_string)
+      @ftp.expects(:getbinaryfile).with('/remote/path.gpg', '/local/path')
+      @service.read_response('/remote/path.gpg', :gpg_passphrase => "my_passphrase")
+    end
+    
+    it "decrypts the response if passed a gpg passphrase" do
+      RubyGpg.expects(:decrypt_string).with('response', 'my_passphrase')
+      @service.read_response('/remote/path.gpg', :gpg_passphrase => "my_passphrase")
+    end
     
     it "returns the contents of the downloaded response" do
       @service.read_response('/remote/path').should == "response"

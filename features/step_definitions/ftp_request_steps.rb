@@ -15,6 +15,11 @@ When /^the server responds with "([^\"]*)" at the path "([^\"]*)"$/ do |response
   ftp.storlines("STOR #{remote_path}", response)
 end
 
+When /^the server responds with "([^\"]*)" encrypted for "([^\"]*)" at the path "([^\"]*)"$/ do |response, gpg_recipient, remote_path|
+  # Cheating a bit here to mimic a ftp service response by sending a request...
+  @service.write_request(response, remote_path, :gpg_recipient => gpg_recipient)
+end
+
 When /^I download the binary request at "([^\"]*)" to "([^\"]*)"$/ do |remote_path, local_path|
   File.delete(local_path) if File.exist?(local_path)
   ftp.getbinaryfile(remote_path, "#{TMP_PATH}/#{local_path}")
@@ -44,6 +49,10 @@ end
 
 Then /^I can read the response at the path "([^\"]*)"$/ do |remote_path|
   @actual_response = @service.read_response(remote_path)
+end
+
+Then /^I can read the response at the path "([^\"]*)" with the passphrase "([^\"]*)"$/ do |remote_path, gpg_passphrase|
+  @actual_response = @service.read_response(remote_path, :gpg_passphrase => gpg_passphrase)
 end
 
 Then /^the response should be "([^\"]*)"$/ do |response|
