@@ -3,7 +3,7 @@
 An FTP Service is like a web service except stupid. You send your
 request by uploading an xml file and get your response by downloading
 another xml file. Have you ever had to deal with something like that? I
-have.
+have. It sucks.
 
 RDocs on [rdoc.info](http://rdoc.info/projects/blaix/ftp_service).
 
@@ -18,20 +18,15 @@ Source code on [github](http://github.com/blaix/ftp_service).
     require 'ftp_service'
   
     FtpService.open('host', 'user', 'pass') do |service|
-      path = '/the/remote/path'
-      service.write_request("#{path}/request.xml", '<foo>bar</foo>')
-      response = service.read_response("#{path}/response.xml")
+      service.write_request('<foo>bar</foo>', "/request/path.xml")
+      response = service.read_response("/response/path.xml")
     end
 
-* `read_response` will block while it polls the server waiting for a
-  response.
-* Temp files are created for the local request and response files and
-  deleted when no longer needed.
-
 For more details, see the
-[RDocs](http://rdoc.info/projects/blaix/ftp_service) (sike they are
-really yardocs!).
+[RDocs](http://rdoc.info/projects/blaix/ftp_service).
   
 ## Copyright
 
-Copyright (c) 2010 Justin Blake. See LICENSE for details.
+Copyright (c) 2010 Justin Blake. See
+[LICENSE](http://github.com/blaix/ftp_service/raw/master/LICENSE) for
+details.
