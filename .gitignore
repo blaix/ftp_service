@@ -20,6 +20,7 @@ doc
 pkg
 .yardoc
 tmp
+*.gemspec
 
 ## PROJECT::SPECIFIC
 test_keys/random_seed
