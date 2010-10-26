@@ -3,7 +3,8 @@
 An FTP Service is like a web service except stupid. You send your
 request by uploading an xml file and get your response by downloading
 another xml file. Have you ever had to deal with something like that? I
-have. It sucks.
+have. It sucks. I wrote this to make it suck less. I hope no one else has to
+use it.
 
 RDocs on [rdoc.info](http://rdoc.info/projects/blaix/ftp_service).
 
@@ -22,7 +23,7 @@ Source code on [github](http://github.com/blaix/ftp_service).
       response = service.read_response("/response/path.xml")
     end
 
-For more details, see the
+Encryption with GPG is also upported. For more details, see the
 [RDocs](http://rdoc.info/projects/blaix/ftp_service).
   
 ## Copyright
